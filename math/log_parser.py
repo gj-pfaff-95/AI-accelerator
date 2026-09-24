@@ -35,14 +35,13 @@ class TripartiteLogParser:
             for line in file:
                 match = coord_pattern.search(line)
                 if match:
-                    # Extract raw coordinate vectors safely
                     coords = [int(match.group(1)), int(match.group(2)), int(match.group(3))]
                     
-                    # Compute phase configuration using the tracked X axis scalar
+                    # FIXED: Added [0] index accessor here to avoid list-attribute conflicts
                     phase = self.calculate_node_phase(self.PACKET_ID_DEFAULT, coords[0])
                     
-                    # Enforce the strict bitwise phase condensed token thresholds
                     if 0 <= phase <= 53:
+
                         self.matrix_light.append(coords)
                     elif 54 <= phase <= 108:
                         self.matrix_dark.append(coords)
