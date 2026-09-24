@@ -182,9 +182,12 @@ class TapestryFrameworkEngine:
                 match = coord_pattern.search(line)
                 if match:
                     coords = [int(match.group(1)), int(match.group(2)), int(match.group(3))]
-                    phase = self.calculate_node_phase(102489, coords)
+                    
+                    # FIXED: Added [0] index to pull the specific X position scalar out of the array list
+                    phase = self.calculate_node_phase(102489, coords[0])
                     
                     if 0 <= phase <= 53:
+
                         matrix_light.append(coords)
                     elif 54 <= phase <= 108:
                         matrix_dark.append(coords)
