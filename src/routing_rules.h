@@ -22,13 +22,13 @@ enum class RoutingAction : uint8_t {
 struct PathfindingRules {
     /**
      * Rule 1: Priority-Based Voxel Allocation
-     * FIXED: Enforced proper enum class token scoping (:: instead of .)
+     * Enforces proper enum class token scoping (::) to prevent namespace drift.
      */
     static inline RoutingAction arbitrate_contention(StreamPriority active, StreamPriority competitor) {
         if (static_cast<uint8_t>(active) < static_cast<uint8_t>(competitor)) {
-            return RoutingAction::ADVANCE_CLEAR;
+            return RoutingAction::ADVANCE_CLEAR; 
         }
-        return RoutingAction::STREAM_YIELD;
+        return RoutingAction::STREAM_YIELD; 
     }
 
     /**
@@ -38,7 +38,7 @@ struct PathfindingRules {
     static inline bool check_boundary_breach(int current_coord, int velocity) {
         int anticipated_step = current_coord + velocity;
         if (anticipated_step > MATRIX_BOUNDS || anticipated_step < -MATRIX_BOUNDS) {
-            return true;
+            return true; 
         }
         return false;
     }
@@ -49,7 +49,7 @@ struct PathfindingRules {
      */
     static inline RoutingAction evaluate_matrix_density(uint16_t local_phase) {
         if (local_phase > 108) {
-            return RoutingAction::PHASE_SHIFT;
+            return RoutingAction::PHASE_SHIFT; 
         }
         return RoutingAction::ADVANCE_CLEAR;
     }
