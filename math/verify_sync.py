@@ -55,11 +55,12 @@ class CrossLanguageVerifier:
         for line in result.stdout.splitlines():
             if "Updated packet coordinates:" in line:
                 try:
-                    coord_str = line.split("[")[1].split("]")[0]
-                    return [int(c.strip()) for c in coord_str.split(",")]
-                except IndexError:
+                    raw_bracket_content = line.split("[")[1].split("]")[0]
+                    return [int(c.strip()) for c in raw_bracket_content.split(",")]
+                except (IndexError, ValueError):
                     print("❌ Error: Could not parse coordinate format from C++ stdout.")
                     return None
+
         return None
 
     def execute_cross_audit(self, steps=1000):
