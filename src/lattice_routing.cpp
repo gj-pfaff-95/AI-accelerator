@@ -2,6 +2,7 @@
 #include <vector>
 #include <cstdint>
 #include <cmath>
+#include "routing_rules.h"
 #include "structural_locks.h" // Fixed include syntax
 
 // Represents a data packet moving through the structural lattice
@@ -31,14 +32,28 @@ public:
         // Core deterministic step iteration loop across x, y, and z axes
         for (int dim = 0; dim < 3; ++dim) { 
             int next_step = packet.coordinate[dim] + packet.velocity_vector[dim];
-            
-            // Map edge density bounds using the hard-locked thresholds
-            if (std::abs(next_step) > MATRIX_BOUNDS) { 
+
+            // 1. Rule 2 Implementation: Check for boundary breaches before stepping
+            if (PathfindingRules::check_boundary_breach(packet.coordinate[dim], packet.velocity_vector[dim])) {
                 // Packet hits a structural boundary limit; trigger deflection routing
                 packet.velocity_vector[dim] = -packet.velocity_vector[dim]; 
+                return false; // Route deflected due to matrix structural boundaries
+            }
+            
+            // 2. Calculate the anticipated next step location
+            int next_step = packet.coordinate[dim] + packet.velocity_vector[dim];
+            
+            // 3. Rule 3 Implementation: Check structural phase density conditions at this node
+            uint16_t local_phase = calculate_node_phase(packet.packet_id, next_step);
+            RoutingAction density_action = PathfindingRules::evaluate_matrix_density(local_phase);
+            
+            if (density_action == RoutingAction::PHASE_SHIFT) {
+                // High density detected; apply bitwise toggle to change the tracking routing path axis
+                packet.velocity_vector[dim] = -packet.velocity_vector[dim];
                 return false; 
             }
             
+            // 4. Clear to proceed; update coordinate safely
             packet.coordinate[dim] = next_step;
         }
         return true;
