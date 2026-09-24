@@ -4,58 +4,77 @@ import os
 from route_validator import LatticeRouteValidator
 
 class CrossLanguageVerifier:
-    def __init__(self, cpp_source_path, cpp_binary_path):
-        self.cpp_source = cpp_source_path
-        self.cpp_binary = cpp_binary_path
+    def __init__(self, repo_root_path):
+        self.repo_root = repo_root_path
+        self.build_dir = os.path.join(repo_root_path, "build")
+        
+        # Binary destination generated automatically by your CMakeLists.txt property rules
+        if sys.platform == "win32":
+            self.cpp_binary = os.path.join(self.build_dir, "bin", "LatticeRoutingEngine.exe")
+        else:
+            self.cpp_binary = os.path.join(self.build_dir, "bin", "LatticeRoutingEngine")
+            
         self.validator = LatticeRouteValidator()
 
-    def compile_cpp_engine(self):
-        """Compiles the C++ routing logic using standard g++ optimization flags."""
-        print(f"[M] Register: Compiling {self.cpp_source}...")
-        if not os.path.exists(self.cpp_source):
-            print(f"❌ Error: Source file not found at {self.cpp_source}")
+    def compile_via_cmake(self):
+        """Automates out-of-source CMake builds cleanly to bypass raw g++ platform bugs."""
+        print(f"[M] Register: Initializing platform-native CMake build pipeline...")
+        
+        # 1. Automatically handle missing build directories
+        if not os.path.exists(self.build_dir):
+            os.makedirs(self.build_dir)
+            
+        # 2. Generate build generation cache files
+        gen_result = subprocess.run(["cmake", ".."], cwd=self.build_dir, capture_output=True, text=True)
+        if gen_result.returncode != 0:
+            print("❌ CMake generation pass failed:")
+            print(gen_result.stderr)
             return False
             
-        compile_cmd = ["g++", "-O3", self.cpp_source, "-o", self.cpp_binary]
-        result = subprocess.run(compile_cmd, capture_output=True, text=True)
-        
-        if result.returncode != 0:
-            print("❌ Compilation failed:")
-            print(result.stderr)
+        # 3. Compile optimized production target binary
+        build_result = subprocess.run(["cmake", "--build", "."], cwd=self.build_dir, capture_output=True, text=True)
+        if build_result.returncode != 0:
+            print("❌ CMake compilation target execution failed:")
+            print(build_result.stderr)
             return False
-        print("✅ C++ compilation successful.")
+            
+        print("✅ CMake build targets updated cleanly.")
         return True
 
     def run_cpp_engine(self, steps):
         """Executes the compiled C++ binary and extracts its final state coordinates."""
-        # Note: In a production test, pass the step count directly via a CLI argument or config
         print(f"[M] Register: Running C++ execution layer for {steps:,} steps...")
+        if not os.path.exists(self.cpp_binary):
+            print(f"❌ Error: Compiled execution binary missing at {self.cpp_binary}")
+            return None
+            
         result = subprocess.run([self.cpp_binary], capture_output=True, text=True)
-        
         if result.returncode != 0:
             print("❌ C++ Execution Error:")
             print(result.stderr)
             return None
             
-        # Parse the coordinates from stdout output text
-        # Assumes format: "Updated packet coordinates: [X, Y, Z]"
+        # Parse coordinates from stdout (Format: "Updated packet coordinates: [X, Y, Z]")
         for line in result.stdout.splitlines():
             if "Updated packet coordinates:" in line:
-                coord_str = line.split("[")[1].split("]")[0]
-                return [int(c.strip()) for c in coord_str.split(",")]
+                try:
+                    coord_str = line.split("[")[1].split("]")[0]
+                    return [int(c.strip()) for c in coord_str.split(",")]
+                except IndexError:
+                    print("❌ Error: Could not parse coordinate format from C++ stdout.")
+                    return None
         return None
 
     def execute_cross_audit(self, steps=1000):
-        """Compares the Python mathematical model outputs directly against the C++ binary results."""
+        """Compares the NumPy model outputs directly against the CMake binary results."""
         print("==================================================")
         print("🤖 COMMENCING MULTI-REGISTER MATRIX VERIFICATION")
         print("==================================================")
         
-        if not self.compile_cpp_engine():
+        if not self.compile_via_cmake():
             sys.exit(1)
             
-        # 1. Gather Python Reference Ground Truth
-        # Modify your prototype to run for the exact matching short tracking block
+        # 1. Gather NumPy Reference Ground Truth
         py_results = self.validator.run_stress_test(total_steps=steps)
         py_coords = py_results["final_coords"]
         
@@ -81,10 +100,8 @@ class CrossLanguageVerifier:
             return False
 
 if __name__ == "__main__":
-    # Point relative paths to your active workspace directories
-    cpp_src = os.path.join(os.path.dirname(__file__), "../src/lattice_routing.cpp")
-    cpp_bin = os.path.join(os.path.dirname(__file__), "../src/lattice_routing.bin")
+    # Resolve the absolute project repository root workspace folder path
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     
-    verifier = CrossLanguageVerifier(cpp_src, cpp_bin)
-    # Run a localized 1,000-step cross-audit pass to confirm absolute logical alignment
+    verifier = CrossLanguageVerifier(repo_root)
     verifier.execute_cross_audit(steps=1000)
