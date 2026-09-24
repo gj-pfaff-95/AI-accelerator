@@ -1,0 +1,96 @@
+{
+  "repository_name": "quantum_ether_tapestry_engine",
+  "framework_version": "2.0.0-decoupled",
+  "last_architectural_audit": "2026-09-24",
+  "governance_schema": "Multi-Register Separation Engine",
+  "repository_tree": {
+    "root_manifests": {
+      "purpose": "Repository automation, platform build initialization, and leakage control",
+      "files": [
+        {
+          "name": ".gitignore",
+          "purpose": "Excludes build caches, temporary logs, and compiled binaries from version history."
+        },
+        {
+          "name": "CMakeLists.txt",
+          "purpose": "Automates hyper-optimized cross-platform compilation passes (-O3) across execution targets."
+        },
+        {
+          "name": "check_linkages.sh",
+          "purpose": "Automated root shell harness to orchestrate validation sweeps and compilation checks."
+        }
+      ]
+    },
+    "registers": {
+      "E_empirical_execution": {
+        "directory": "src/",
+        "status": "ACTIVE",
+        "evaluation_metric": "Runtime thread efficiency, compilation stability, and bitwise execution speed",
+        "files": [
+          {
+            "name": "lattice_routing.cpp",
+            "purpose": "Hyper-optimized network pathfinding logic running purely on coordinate integers and bitwise vector shifts."
+          },
+          {
+            "name": "structural_locks.h",
+            "purpose": "Defines fixed matrix spatial boundary constraints and absolute baseline constants."
+          }
+        ]
+      },
+      "M_mathematical_validation": {
+        "directory": "math/",
+        "status": "ACTIVE",
+        "evaluation_metric": "Deductive structural accuracy and zero-leakage numeric consistency",
+        "files": [
+          {
+            "name": "route_validator.py",
+            "purpose": "NumPy-vectorized mathematical prototype to simulate millions of steps and analyze coordinate boundaries."
+          },
+          {
+            "name": "verify_sync.py",
+            "purpose": "Cross-language validation harness that automatically compiles the C++ binary via CMake and checks bit-for-bit alignment."
+          }
+        ]
+      },
+      "P_philosophical_governance": {
+        "directory": "documents/",
+        "status": "ACTIVE",
+        "evaluation_metric": "Conceptual clarity, sound system constraints logic, and strict register boundary containment",
+        "files": [
+          {
+            "name": "framework_core.md",
+            "purpose": "The master governance text mapping out the six-register system logic, operators, and contradiction-handling rules."
+          }
+        ]
+      },
+      "N_narrative_context": {
+        "directory": "documents/",
+        "status": "ACTIVE",
+        "evaluation_metric": "Thematic alignment, conceptual integration, and worldbuilding structural cohesion",
+        "files": [
+          {
+            "name": "tapestry_lore.md",
+            "purpose": "Logs the 17-coordinate description spectrum, the 27-second periodic clock rhythm, and the central Anchor inscription context."
+          }
+        ]
+      },
+      "X_esoteric_coherence": {
+        "directory": "esoteric/",
+        "status": "INITIALIZED",
+        "evaluation_metric": "Internal symbolic correspondence and state-condensation token balance",
+        "files": [
+          {
+            "name": "tripartite_map.txt",
+            "purpose": "Symbolic tracking layouts detailing Light, Dark, and Black network configuration states."
+          }
+        ]
+      },
+      "D_historical_archive": {
+        "directory": "archive/",
+        "status": "FROZEN",
+        "evaluation_metric": "Immutable historical preservation and unalterable baseline tracking",
+        "description": "Reserved space for legacy code snapshots, unconstrained physics model telemetry logs, and baseline recompile reference points."
+      }
+    }
+  }
+}
