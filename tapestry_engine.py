@@ -83,11 +83,14 @@ class TapestryFrameworkEngine:
         for line in cpp_run.stdout.splitlines():
             if "Updated packet coordinates:" in line:
                 try:
-                    coord_str = line.split("[").split("]")
-                    cpp_coords = [int(c.strip()) for c in coord_str.split(",")]
-                except IndexError:
+                    # Extracts the text between the brackets [ and ] safely
+                    raw_bracket_content = line.split("[")[1].split("]")[0]
+                    # Converts the remaining clean comma-separated values into integers
+                    cpp_coords = [int(c.strip()) for c in raw_bracket_content.split(",")]
+                except (IndexError, ValueError):
                     print("❌ Error: Failed to parse coordinate matrix from C++ output stream.")
                     return False
+
 
         if cpp_coords is None:
             print("❌ Failure: C++ console log output did not print terminal position array.")
