@@ -14,7 +14,6 @@ class TapestryFrameworkEngine:
         self.manifest_path = os.path.join(self.repo_root, "manifest.json")
         self.MATRIX_BOUNDS = 2048
         
-        # Resolve target binary paths based on platform parameters
         if sys.platform == "win32":
             self.cpp_binary = os.path.join(self.build_dir, "bin", "LatticeRoutingEngine.exe")
         else:
@@ -67,11 +66,9 @@ class TapestryFrameworkEngine:
         """[M ↔ E Integration Pass] Compares the Python core model against the compiled C++ binary bit-for-bit."""
         self.print_header("RUNNING CROSS-LANGUAGE SANITY COMPARISON")
         
-        # 1. Grab Python baseline coordinates
         print("[+] Processing 1,000 step Python reference trajectory...")
-        py_coords = self.run_python_reference_simulation(steps=1000)
+        py_coords = self.run_python_reference_simulation(total_steps=1000)
         
-        # 2. Run C++ binary to gather its runtime state output
         if not os.path.exists(self.cpp_binary):
             print("❌ Failure: Compiled C++ executable missing. Run compilation pass first.")
             return False
@@ -86,7 +83,7 @@ class TapestryFrameworkEngine:
         for line in cpp_run.stdout.splitlines():
             if "Updated packet coordinates:" in line:
                 try:
-                    coord_str = line.split("[")[1].split("]")[0]
+                    coord_str = line.split("[").split("]")
                     cpp_coords = [int(c.strip()) for c in coord_str.split(",")]
                 except IndexError:
                     print("❌ Error: Failed to parse coordinate matrix from C++ output stream.")
@@ -96,7 +93,6 @@ class TapestryFrameworkEngine:
             print("❌ Failure: C++ console log output did not print terminal position array.")
             return False
 
-        # 3. Cross-examination bit-for-bit assertion check
         print(f" -> [M Register] Python Reference Out : {py_coords}")
         print(f" -> [E Register] C++ Production Out   : {cpp_coords}")
         
@@ -186,7 +182,7 @@ class TapestryFrameworkEngine:
                 match = coord_pattern.search(line)
                 if match:
                     coords = [int(match.group(1)), int(match.group(2)), int(match.group(3))]
-                    phase = self.calculate_node_phase(102489, coords[0])
+                    phase = self.calculate_node_phase(102489, coords)
                     
                     if 0 <= phase <= 53:
                         matrix_light.append(coords)
@@ -208,10 +204,7 @@ class TapestryFrameworkEngine:
         print("🤖 INITIALIZING BESPOKE TAPESTRY ENGINE WORKFLOW...")
         if not self.audit_repository_manifest(): sys.exit(1)
         if not self.execute_empirical_build(): sys.exit(1)
-        
-        # New Step: Proactive sanity check executed before the workload pass commits
         if not self.execute_cross_language_sanity_check(): sys.exit(1)
-        
         if not self.execute_traffic_routing_pipeline(): sys.exit(1)
         self.execute_tripartite_condensation_parse()
         print("\n🎉 ALL MULTI-REGISTER LOOPS CONVERGED SUCCESSFULLY WITH 0% LEAKAGE\n")
