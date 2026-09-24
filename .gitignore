@@ -1,0 +1,48 @@
+# ==============================================================================
+# 🌐 Quantum Ether Tapestry Engine — Master Git Ignore Manifest
+# ==============================================================================
+
+# --- [E] Empirical Register / Binary Outputs ---
+*.bin
+*.out
+*.exe
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+
+# --- Specific Pipeline Build Artifacts ---
+src/lattice_routing.bin
+
+# --- [M] Mathematical Register / Python Caches ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ipynb_checkpoints/
+
+# --- Build & Tooling Directories ---
+build/
+bin/
+obj/
+.cmake/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+
+# --- Local Workspace / OS Management ---
+.DS_Store
+Thumbs.db
+*.log
+.swp
+*~
+
+# --- IDE Project Configurations (Optional Cleanup) ---
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
