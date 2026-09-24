@@ -2,8 +2,8 @@
 #include <vector>
 #include <cstdint>
 #include <cmath>
-#include "routing_rules.h"
-#include "structural_locks.h" // Fixed include syntax
+#include "structural_locks.h"
+#include "routing_rules.h" // Links the newly established pathfinding rules
 
 // Represents a data packet moving through the structural lattice
 struct DataPacket {
@@ -11,6 +11,7 @@ struct DataPacket {
     int coordinate[14];      // Explicitly defined 14-Dimensional coordinate array
     int velocity_vector[3];   // 3D routing direction vector (x, y, z)
     uint32_t payload_size;
+    StreamPriority priority;  // Stream priority categorization token
 };
 
 class LatticeRoutingEngine {
@@ -31,8 +32,7 @@ public:
     bool route_packet(DataPacket& packet) {
         // Core deterministic step iteration loop across x, y, and z axes
         for (int dim = 0; dim < 3; ++dim) { 
-            int next_step = packet.coordinate[dim] + packet.velocity_vector[dim];
-
+            
             // 1. Rule 2 Implementation: Check for boundary breaches before stepping
             if (PathfindingRules::check_boundary_breach(packet.coordinate[dim], packet.velocity_vector[dim])) {
                 // Packet hits a structural boundary limit; trigger deflection routing
@@ -81,16 +81,21 @@ int main() {
         102489, 
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, // Aligned to Anchor reference lock
         {1, -1, 1},                                 // 3-Axis initial routing vector
-        256
+        256,
+        StreamPriority::LIGHT_STREAM                // Initialized as real-time priority traffic
     };
 
     std::cout << "[E] Register: Initializing core network routing logic execution test..." << std::endl;
     
     // Execute a short 1,000-step test loop to generate an exact comparative matrix for Python
+    int successful_steps = 0;
     for (int step = 0; step < 1000; ++step) {
-        engine.route_packet(test_packet);
+        if (engine.route_packet(test_packet)) {
+            successful_steps++;
+        }
     }
     
+    std::cout << "Test loop complete. Clear advances: " << successful_steps << "/1000 steps." << std::endl;
     std::cout << "Updated packet coordinates: [" 
               << test_packet.coordinate[0] << ", " 
               << test_packet.coordinate[1] << ", " 
