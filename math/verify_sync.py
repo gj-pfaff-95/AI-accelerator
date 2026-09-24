@@ -8,7 +8,7 @@ class CrossLanguageVerifier:
         self.repo_root = repo_root_path
         self.build_dir = os.path.join(repo_root_path, "build")
         
-        # Binary destination generated automatically by your CMakeLists.txt property rules
+        # Resolve path configurations based on target OS parameters
         if sys.platform == "win32":
             self.cpp_binary = os.path.join(self.build_dir, "bin", "LatticeRoutingEngine.exe")
         else:
@@ -17,21 +17,18 @@ class CrossLanguageVerifier:
         self.validator = LatticeRouteValidator()
 
     def compile_via_cmake(self):
-        """Automates out-of-source CMake builds cleanly to bypass raw g++ platform bugs."""
+        """Automates out-of-source CMake builds cleanly to bypass raw compiler platform bugs."""
         print(f"[M] Register: Initializing platform-native CMake build pipeline...")
         
-        # 1. Automatically handle missing build directories
         if not os.path.exists(self.build_dir):
             os.makedirs(self.build_dir)
             
-        # 2. Generate build generation cache files
         gen_result = subprocess.run(["cmake", ".."], cwd=self.build_dir, capture_output=True, text=True)
         if gen_result.returncode != 0:
             print("❌ CMake generation pass failed:")
             print(gen_result.stderr)
             return False
             
-        # 3. Compile optimized production target binary
         build_result = subprocess.run(["cmake", "--build", "."], cwd=self.build_dir, capture_output=True, text=True)
         if build_result.returncode != 0:
             print("❌ CMake compilation target execution failed:")
@@ -66,7 +63,7 @@ class CrossLanguageVerifier:
         return None
 
     def execute_cross_audit(self, steps=1000):
-        """Compares the NumPy model outputs directly against the CMake binary results."""
+        """Compares the NumPy model outputs directly against the C++ binary results."""
         print("==================================================")
         print("🤖 COMMENCING MULTI-REGISTER MATRIX VERIFICATION")
         print("==================================================")
